@@ -39,3 +39,20 @@ network:
             addresses:
                 - 172.16.1.1/24
 ```
+
+### Expand VM Guest Disk (LVM)
+
+```sh
+# 1. Fix partition table meta-data
+# /dev/vda is the disk we expanded in VM host
+sudo parted /dev/vda
+# 2. Resize partition
+# Re-create last partition, extend partition size
+sudo fdisk vda
+# 3. Resize PV
+# /dev/vda3 holds the PV
+sudo pvresize /dev/vda3
+# 4. Resize LV and Parition
+# `-r` means run resize2fs after resizing LV
+sudo lvextend -l +100%FREE /dev/vg0/lv-0 -r
+```
